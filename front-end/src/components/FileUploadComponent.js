@@ -11,6 +11,11 @@ function FileUploadComponent(props) {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleUploadFile = () => {
+    // Check if the file has a .py extension
+    if (!file.name.endsWith('.py')) {
+      alert('Only Python files .py are allowed');
+      return;
+    }
     if (file) {
       setIsUploading(true);
 
@@ -37,9 +42,7 @@ function FileUploadComponent(props) {
   // Function to upload file to s3; reference: https://medium.com/how-to-react/how-to-upload-files-on-an-s3-bucket-in-react-js-97a3ccd519d1
   const uploadFile = async (file, username) => {
     // S3 Bucket Name
-    const S3_BUCKET ='autograder-bucket';
-    // const S3_BUCKET ='myebikebucket';
-    
+    const S3_BUCKET ='autograder-bucket'; 
     const REGION ='us-east-1';
 
     console.log("in upload_file: ", username)
@@ -92,7 +95,7 @@ function FileUploadComponent(props) {
   return (
     <Pane style={{ width: '1000px', height: '300px'}}>
       <FileUploader
-        description={<span style={{ color: '#D8D8D8' }}>Only one file can be uploaded</span>} 
+        description={<span style={{ color: '#D8D8D8' }}>Submit your solution here. Only one .py file can be uploaded</span>} 
         className="custom-file-uploader"
         onChange={handleFileAccepted} 
         onRemove={handleFileRemoved}
