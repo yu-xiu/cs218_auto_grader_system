@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./HomePage.css"
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 
 
 const HomePage = () => {
@@ -14,7 +15,6 @@ const HomePage = () => {
 const Display = () => {
   return (
       <div className="display-container">
-        
         <p className="titleText">Welcome to Auto Grader System</p>
         <p className="subTitleText">Here is your question: Knight Attack</p>
         <div className="question-container">
