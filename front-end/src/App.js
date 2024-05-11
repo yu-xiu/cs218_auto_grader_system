@@ -1,16 +1,14 @@
 import './App.css';
 import HomePage from './pages/HomePage';
-
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import SingleFileUpload from './pages/SingleFileUpload';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import Navbar from './components/NavBar';
 
 
-function App() {
+function App({signOut, user}) {
   const [selectedFile, setSelectedFile] = useState(null);
-  // const files = [
-  //   { name: 'File 1', /* additional file information */ },
-  //   { name: 'File 2', /* additional file information */ },
-  // ];
   const handleItemClick = (file) => {
     setSelectedFile(file);
   };
@@ -18,8 +16,11 @@ function App() {
   return (
     
     <Router>
+      <Navbar signOut={signOut} user={user}/>
       <Routes>
         <Route exact path="/" element={<HomePage />} />
+        <Route exact path="/home" element={<HomePage />} />
+        <Route exact path="/upload" element={<SingleFileUpload />} />
       </Routes>
     </Router>
   );
