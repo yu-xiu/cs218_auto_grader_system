@@ -140,11 +140,15 @@ def grade_s3_file_save_to_dynamodb():
             #     # 'Comments': {'S': grading_result['comments']}
             # }
         )
-        return jsonify(grading_result)
+        # return jsonify(grading_result)
+        return jsonify({'comments': grading_result['comments'], 'grade': grading_result['grade']})
         # return Response(file_content, mimetype='text/plain')
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@app.route('/test',  methods=['POST'])
+def test():
+    print("tesT!!!!")
 
 # Run the Flask app
 if __name__ == '__main__':

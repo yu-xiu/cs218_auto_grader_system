@@ -9,15 +9,15 @@ import AWS from 'aws-sdk'
 function FileUploadComponent(props) {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { setResult } = useContext(ResultContext);
+  // const { setResult } = useContext(ResultContext);
+  const [results, setResult] = useState([]);
 
   const ping_python = async (filename, userid) => {
     console.log("in ping python")
     console.log(userid);
-    setResult("Processing Upload")
-    const response = await fetch('http://127.0.0.1/grade_s3_file_save_to_dynamodb', {
-        method: 'POST', // or 'PUT'
-      });
+    // setResult("Processing Upload")
+    const response = await fetch('http://localhost:80/grade_s3_file_save_to_dynamodb')
+    //const response = await fetch('http://localhost:80/test');
 
     if (response.ok) {
         const data = await response.json();
@@ -25,6 +25,18 @@ function FileUploadComponent(props) {
         setResult(data);
     }
  }
+  const update = async () => {
+    try{
+      const response = await fetch('http://localhost:80/grade_s3_file_save_to_dynamodb')
+      if(!response.ok){
+        throw new Error('Network response is not working');
+      }
+      const data = await response.json();
+      setResult(data.grade);
+    }catch (error){
+      console.error('Error:', error);
+    }
+  }
 
   const handleUploadFile = () => {
     // restrict to .py extension
@@ -101,6 +113,8 @@ function FileUploadComponent(props) {
       // Fille successfully uploaded
       alert("File uploaded successfully.");
       ping_python(file_name_w_id, username)
+      update()
+      console.log(results)
     });
   };
 

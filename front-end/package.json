@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "aws-sdk": "^2.1618.0",
     "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
     "evergreen-ui": "^7.1.9",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.2",
