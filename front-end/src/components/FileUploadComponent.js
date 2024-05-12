@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useContext} from "react";
-// import ResultContext from "../context/ResultContext";
+import ResultContext from "../context/ResultContext";
 import { Pane, FileUploader, Card, Spinner } from 'evergreen-ui';
 import "./FileUploadComponent.css"
 import AWS from 'aws-sdk'
@@ -9,9 +9,25 @@ import AWS from 'aws-sdk'
 function FileUploadComponent(props) {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { setResult } = useContext(ResultContext);
+
+  const ping_python = async (filename, userid) => {
+    console.log("in ping python")
+    console.log(userid);
+    setResult("Processing Upload")
+    const response = await fetch('http://127.0.0.1/grade_s3_file_save_to_dynamodb', {
+        method: 'POST', // or 'PUT'
+      });
+
+    if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setResult(data);
+    }
+ }
 
   const handleUploadFile = () => {
-    // Check if the file has a .py extension
+    // restrict to .py extension
     if (!file.name.endsWith('.py')) {
       alert('Only Python files .py are allowed');
       return;
@@ -84,6 +100,7 @@ function FileUploadComponent(props) {
       console.log(err);
       // Fille successfully uploaded
       alert("File uploaded successfully.");
+      ping_python(file_name_w_id, username)
     });
   };
 
@@ -101,7 +118,7 @@ function FileUploadComponent(props) {
         onRemove={handleFileRemoved}
         maxSizeInBytes={300 * 1024 * 1024}
         maxFiles={1} 
-        accept="application/x-python-code,.py" // restrict to python file only
+        accept="application/x-python-code,.py"
      />
       <Card className='custom-card'>
         {isUploading ? (

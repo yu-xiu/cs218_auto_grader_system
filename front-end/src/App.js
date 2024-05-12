@@ -26,7 +26,7 @@ function App({signOut, user}) {
       <Navbar signOut={signOut} user={user}/>
       <Routes>
         <Route exact path="/" element={<HomePage user={user}/>} />
-        <Route exact path="/home" element={<HomePage />} />
+        <Route exact path="/home" element={<HomePage user={user}/>} />
         <Route exact path="/upload" element={<SingleFileUpload />} />
       </Routes>
     </Router>
