@@ -8,7 +8,7 @@ const Navbar = ({user,signOut}) => {
       <nav className="nav">
         <a href="/" className="logo">Auto Grader</a>
         <ul>
-            <li><a className="button" onClick={signOut}>Sign in</a></li>
+            <li><a className="button" onClick={signOut}>Sign Out</a></li>
         </ul>
       </nav>
     );
