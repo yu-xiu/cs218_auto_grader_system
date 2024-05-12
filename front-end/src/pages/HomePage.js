@@ -2,15 +2,18 @@ import React, { useState, useEffect } from 'react';
 import "./HomePage.css"
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import { Heading } from '@aws-amplify/ui-react';
 
 
-const HomePage = () => {
+const HomePage = ({user}) => {
     return (
       <div>
+        
+        <Heading fontSize = '22px' style={{ fontFamily: 'Futura', fontWeight: 100 }} color={'black'} level={1}>Welcom! You've signed in! {user.signInDetails.loginId}</Heading>
         <Display />
       </div>
     );
-  };
+};
 
 const Display = () => {
   return (
