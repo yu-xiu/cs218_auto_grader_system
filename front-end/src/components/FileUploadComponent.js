@@ -1,43 +1,41 @@
 import React, { useState } from 'react';
-import { useContext} from "react";
-import ResultContext from "../context/ResultContext";
 import { Pane, FileUploader, Card, Spinner } from 'evergreen-ui';
 import "./FileUploadComponent.css"
 import AWS from 'aws-sdk'
 
 
-function FileUploadComponent(props) {
+function FileUploadComponent({ user }) {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   // const { setResult } = useContext(ResultContext);
   const [results, setResult] = useState([]);
 
-  const ping_python = async (filename, userid) => {
-    console.log("in ping python")
-    console.log(userid);
-    // setResult("Processing Upload")
-    const response = await fetch('http://localhost:80/grade_s3_file_save_to_dynamodb')
-    //const response = await fetch('http://localhost:80/test');
+
+ const ping_python = async (filename, userid) => {
+  console.log("in ping python");
+  console.log(userid);
+
+  try {
+    const response = await fetch('http://localhost:80/grade_s3_file_save_to_dynamodb', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ filename, userid })
+    });
 
     if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setResult(data);
-    }
- }
-  const update = async () => {
-    try{
-      const response = await fetch('http://localhost:80/grade_s3_file_save_to_dynamodb')
-      if(!response.ok){
-        throw new Error('Network response is not working');
-      }
       const data = await response.json();
-      setResult(data.grade);
-    }catch (error){
-      console.error('Error:', error);
+      console.log(data);
+      setResult(data);
+    } else {
+      console.error('Failed to ping python backend');
     }
+  } catch (error) {
+    console.error('Error:', error);
   }
-
+};
+ 
   const handleUploadFile = () => {
     // restrict to .py extension
     if (!file.name.endsWith('.py')) {
@@ -49,9 +47,9 @@ function FileUploadComponent(props) {
 
       // Perform file upload here, e.g., using an API call
       console.log('Uploading file:', file.name);
-      console.log("Current User:", props.username)
+      // console.log("Current User:", props.username)
       
-      uploadFile(file, props.username).then(() => {
+      uploadFile(file, user).then(() => {
         setIsUploading(false);
       });
     }
@@ -90,11 +88,17 @@ function FileUploadComponent(props) {
     // generate unique file name to store in the bucket, then there would be no replacements for the file with same name
     const file_name_w_id = (Math.floor(100000000 + Math.random() * 900000000).toString()) + "_" + file.name;
 
+    
+    const user_email = user.signInDetails.loginId
+    console.log(user_email)
     // Files Parameters
     const params = {
       Bucket: S3_BUCKET,
       Key: file_name_w_id,
       Body: file,
+      Metadata: {
+        'user-email': user_email
+    }
     };
 
     // Uploading file to s3
@@ -110,10 +114,10 @@ function FileUploadComponent(props) {
 
     await upload.then((err, data) => {
       console.log(err);
-      // Fille successfully uploaded
+      // File successfully uploaded
       alert("File uploaded successfully.");
-      ping_python(file_name_w_id, username)
-      update()
+      ping_python(file_name_w_id, user_email)
+      // update()
       console.log(results)
     });
   };

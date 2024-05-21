@@ -33,28 +33,6 @@ dynamodb = boto3.client(
 def hello():
     return 'Hello, World!'
 
-# def test_01():
-#     # Your test logic here
-#     # For example, execute the knight_attack function and check if it returns the expected result
-#     try:
-#         assert knight_attack(8, 1, 1, 2, 2) == 2
-#         return True
-#     except AssertionError:
-#         return False
-# def test_02():
-#     assert knight_attack(8, 1, 1, 2, 3) == 1
-# def test_03():
-#     assert knight_attack(8, 0, 3, 4, 2) == 3
-# def test_04():
-#     assert knight_attack(8, 0, 3, 5, 2) == 4
-# def test_05():
-#     assert knight_attack(24, 4, 7, 19, 20) == 10
-# def test_06():
-#     assert knight_attack(100, 21, 10, 0, 0) == 11
-# def test_07():
-#     assert knight_attack(3, 0, 0, 1, 2) == 1
-# def test_08():
-#     assert knight_attack(3, 0, 0, 1, 1) is None
 
 def grade_py_file(file_conent):
     return {"grade": "100", "comments": "Excellent work!"}
@@ -87,26 +65,28 @@ def test(file_content):
             else:
                 return False, "Test failed: knight_attack function not found"
 
-
-@app.route('/grade_s3_file_save_to_dynamodb',  methods=['GET', 'POST'])
-# get student's uploaded python solution from S3 bucket
+    
+@app.route('/grade_s3_file_save_to_dynamodb', methods=['POST'])
 def grade_s3_file_save_to_dynamodb():
-    print('Getting file content')
+    data = request.json
+    filename = data.get('filename')
+    userid = data.get('userid')
 
-    # Get the filename and username from the query parameters
-    filename = request.args.get('filename')
-    userid = request.args.get('username')
+    # Process the filename and userid as needed
+    print(f"Received filename: {filename} and userid: {userid}")
 
-    print("Filename:", filename)
-    print("Username:", userid)
-
-    if not filename or not userid:
-        return jsonify({'error': 'Filename or username not provided'}), 400
-
+    # Dummy response
+    response = {
+        "status": "success",
+        "message": "File processed successfully",
+        "filename": filename,
+        "userid": userid
+    }
 
     bucket_name = 'autograder-bucket'
 
     score = 0
+    
     try:
         # Retrieve the object from S3
         obj = s3.get_object(Bucket=bucket_name, Key=filename)
@@ -114,12 +94,12 @@ def grade_s3_file_save_to_dynamodb():
 
         grading_result = grade_py_file(file_content)
         print(type(file_content))
-        # passed, comment, count_of_correctness = test(file_content)
-        # if count_of_correctness >= 4:
-        #     grade = 50
+        passed, comment, count_of_correctness = test(file_content)
+        if count_of_correctness >= 4:
+            grade = 50
         
-        # if count_of_correctness == 8:
-        #     grade = 100
+        if count_of_correctness == 8:
+            grade = 100
 
         # Save the grading result to DynamoDB
         score = str(score)
@@ -132,19 +112,13 @@ def grade_s3_file_save_to_dynamodb():
                 'Filename': {'S': filename},
                 'Grade': {'S': grading_result['grade']},
                 'Comments': {'S': grading_result['comments']}
-            }
-            # Item={
-            #     'user': {'S': userid},
-            #     'Filename': {'S': filename},
-            #     'Grade': {'S': score},
-            #     # 'Comments': {'S': grading_result['comments']}
-            # }
-        )
-        # return jsonify(grading_result)
+            })
         return jsonify({'comments': grading_result['comments'], 'grade': grading_result['grade']})
         # return Response(file_content, mimetype='text/plain')
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
     
 @app.route('/test',  methods=['POST'])
 def test():

@@ -1,0 +1,22 @@
+.result-container {
+    display: flex;
+    align-items: left;
+    text-align: left;
+    padding: 10px;
+    background-color: #f0f0f0;
+    position: fixed;
+    bottom: 0; 
+    left: 0;
+    right: 0; 
+    overflow-x: auto;
+    max-height: 100px;
+}
+
+.text {
+    position: absolute;
+    top: 0px;
+    left: 40px;
+    font-size: 35px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #111111;
+}

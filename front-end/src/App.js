@@ -1,5 +1,6 @@
 import './App.css';
 import HomePage from './pages/HomePage';
+import ResultPage from './pages/ResultPage';
 import SingleFileUpload from './pages/SingleFileUpload';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import React, { useState } from 'react';
@@ -27,7 +28,8 @@ function App({signOut, user}) {
       <Routes>
         <Route exact path="/" element={<HomePage user={user}/>} />
         <Route exact path="/home" element={<HomePage user={user}/>} />
-        <Route exact path="/upload" element={<SingleFileUpload />} />
+        <Route exact path="/upload" element={<SingleFileUpload user={user}/>} />
+        <Route exact path="/result" element={<ResultPage user={user}/>} />
       </Routes>
     </Router>
   );
